@@ -31,7 +31,9 @@ typedef enum L3_event
     // STATE CHAT
     Chat_Timer_Expire = 14,
     ReqDis_Rcvd = 15,
-    ReqCON_Other_Rcvd = 16
+    ReqCON_Other_Rcvd = 16,
+    Chat_Rcvd = 17,
+    SDU_Rcvd = 18
 
 } L3_event_e;
 

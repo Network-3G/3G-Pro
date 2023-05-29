@@ -43,7 +43,7 @@ static void L3service_processInputWord(void)
 {
     char c = pc.getc();
     if (main_state == STATE_CHAT &&
-        !arqEvent_checkEventFlag(SDU_Rcvd))
+        !L3_event_checkEventFlag(SDU_Rcvd))
     {
         if (c == '\n' || c == '\r')
         {
@@ -62,7 +62,7 @@ static void L3service_processInputWord(void)
             }
         }
     }
-    elif (!L3_event_checkEventFlag(ReqCON_Send))
+    else if (!L3_event_checkEventFlag(ReqCON_Send))
     {
         if (c == '\n' || c == '\r')
         {
@@ -95,6 +95,7 @@ void L3_initFSM(uint8_t destId)
 
 void L3_FSMrun(void)
 {
+    uint8_t flag_dest = 1;
     uint8_t flag_needPrint = 1;
     uint8_t prev_state = 0;
 
@@ -117,6 +118,16 @@ void L3_FSMrun(void)
         uint8_t *dataPtr = L3_LLI_getMsgPtr();
         uint8_t size = L3_LLI_getSize();
 
+        // 먼저 물어보고 시작
+        if (!L3_event_checkEventFlag(ReqCON_Rcvd))
+        {
+            pc.printf(":: ID for the destination : ");
+
+            pc.scanf("%d", &input_destId);
+            myDestId = input_destId;
+            flag_dest = 0;
+        }
+
         // b
         if (L3_event_checkEventFlag(ReqCON_Rcvd))
         {
@@ -124,12 +135,14 @@ void L3_FSMrun(void)
             // debug("\n -------------------------------------------------\nRCVD MSG : %s (length:%i)\n -------------------------------------------------\n", dataPtr, size);
 
             pc.printf("\nCHAT으로 가기 위한 여정의 시작..");
-            pc.printf("\n -------------------------------------------------\nRCVD from %i : %s (length:%i, seq:%i)\n -------------------------------------------------\n", srcId, L3_msg_getWord(dataPtr), size, L3_msg_getSeq(dataPtr));
+            pc.printf("\n -------------------------------------------------\nRCVD from %i : size %s \n -------------------------------------------------\n", srcId, size);
             // pc.printf("Give a word to send : ");
 
-            // pdu
-            L3_msg_encodeAck(arqAck, L3_msg_getSeq(dataPtr));
-            L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, srcId);
+            /* PDU 들어가야 함 !!!!!!!!!!!!!
+            pduSize = L3_msg_encodeData(arqPdu, originalWord, seqNum, wordLen);
+            L3_LLI_sendData(arqPdu, pduSize, dest_ID);
+            seqNum++;
+            */
 
             // main_state = MAINSTATE_TX;
             main_state = STATE_CON_WAIT;
@@ -141,12 +154,14 @@ void L3_FSMrun(void)
         }
 
         // a: 목적지 설정하는 거
-        else if (L3_event_checkEventFlag(ReqCON_Send))
+        else if (L3_event_checkEventFlag(ReqCON_Send) && (flag_dest == 0))
         {
 
+            /*
             pc.printf(":: ID for the destination : ");
             pc.scanf("%d", &input_destId);
             myDestId = input_destId;
+            */
 
             // msg header setting
             // PDU라 나중에 수정할 것 !!
@@ -168,6 +183,7 @@ void L3_FSMrun(void)
 
             // pc.printf("Give a word to send : ");
 
+            flag_dest = 1;
             L3_event_clearEventFlag(ReqCON_Send);
         }
 
@@ -175,66 +191,78 @@ void L3_FSMrun(void)
         // c
         else if (L3_event_checkEventFlag(SetCON_Accept_Rcvd))
         {
+            pc.printf("return ID C");
             L3_event_clearEventFlag(SetCON_Accept_Rcvd);
         }
 
         // d
         else if (L3_event_checkEventFlag(SetCON_Reject_Rcvd))
         {
+            pc.printf("return ID D");
             L3_event_clearEventFlag(SetCON_Reject_Rcvd);
         }
 
         // e
         else if (L3_event_checkEventFlag(CplCON_Rcvd))
         {
+            pc.printf("return ID E");
             L3_event_clearEventFlag(CplCON_Rcvd);
         }
 
         // f
         else if (L3_event_checkEventFlag(ReqCON_Other_Rcvd))
         {
+            pc.printf("return ID F");
             L3_event_clearEventFlag(ReqCON_Other_Rcvd);
         }
 
         // g
         else if (L3_event_checkEventFlag(SDU_Rcvd))
         {
+            pc.printf("return ID G");
             L3_event_clearEventFlag(SDU_Rcvd);
         }
 
         // h
         else if (L3_event_checkEventFlag(Chat_Rcvd))
         {
+            pc.printf("return ID H");
             L3_event_clearEventFlag(Chat_Rcvd);
         }
 
         // i
         else if (L3_event_checkEventFlag(SDU_Rcvd))
         {
+
+            pc.printf("return ID I");
             L3_event_clearEventFlag(SDU_Rcvd);
         }
 
         // j
         else if (L3_event_checkEventFlag(Chat_Timer_Expire))
         {
+            pc.printf("return ID J");
             L3_event_clearEventFlag(Chat_Timer_Expire);
         }
 
         // k
         else if (L3_event_checkEventFlag(SetDis_Rcvd))
         {
+            pc.printf("return ID K");
             L3_event_clearEventFlag(SetDis_Rcvd);
         }
 
         // l
         else if (L3_event_checkEventFlag(CplDis_Rcvd))
         {
+            pc.printf("return ID L");
             L3_event_clearEventFlag(CplDis_Rcvd);
         }
 
         // m
         else if (L3_event_checkEventFlag(Other_PDU_Rcvd))
         {
+            pc.printf("return ID M");
             L3_event_clearEventFlag(Other_PDU_Rcvd);
         }
         /*
@@ -259,9 +287,11 @@ void L3_FSMrun(void)
 
             pc.printf("STATE CHANGED CON 2 CHAT ");
 
-            // pdu
-            L3_msg_encodeAck(arqAck, L3_msg_getSeq(dataPtr));
-            L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, srcId);
+            /* PDU 들어가야 함 !!!!!!!!!!!!!
+            pduSize = L3_msg_encodeData(arqPdu, originalWord, seqNum, wordLen);
+            L3_LLI_sendData(arqPdu, pduSize, dest_ID);
+            seqNum++;
+            */
 
             // main_state = MAINSTATE_TX;
             main_state = STATE_CHAT;
@@ -462,9 +492,11 @@ void L3_FSMrun(void)
 
             pc.printf("STATE CHANGE 2 DIC CON ");
 
-            // PDU 수정
-            L3_msg_encodeAck(arqAck, L3_msg_getSeq(dataPtr));
-            L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, srcId);
+            /* PDU 들어가야 함 !!!!!!!!!!!!!
+            pduSize = L3_msg_encodeData(arqPdu, originalWord, seqNum, wordLen);
+            L3_LLI_sendData(arqPdu, pduSize, dest_ID);
+            seqNum++;
+            */
 
             // main_state = MAINSTATE_TX;
             main_state = STATE_DIS_WAIT;
@@ -480,10 +512,11 @@ void L3_FSMrun(void)
         {
             pc.printf("SetCON reject ");
 
-            L3_msg_encodeAck(arqAck, L3_msg_getSeq(dataPtr));
-
-            // pdu 생성
-            L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, srcId);
+            /* PDU 들어가야 함 !!!!!!!!!!!!!
+            pduSize = L3_msg_encodeData(arqPdu, originalWord, seqNum, wordLen);
+            L3_LLI_sendData(arqPdu, pduSize, dest_ID);
+            seqNum++;
+            */
 
             flag_needPrint = 1;
 
@@ -493,20 +526,22 @@ void L3_FSMrun(void)
         }
 
         // g
-        else if (arqEvent_checkEventFlag(SDU_Rcvd)) // if data needs to be sent (keyboard input)
+        else if (L3_event_checkEventFlag(SDU_Rcvd)) // if data needs to be sent (keyboard input)
         {
             // msg header setting
-            pduSize = arqMsg_encodeData(arqPdu, originalWord, seqNum, wordLen);
-            arqLLI_sendData(arqPdu, pduSize, dest_ID);
+            /* PDU 들어가야 함 !!!!!!!!!!!!!
+            pduSize = L3_msg_encodeData(arqPdu, originalWord, seqNum, wordLen);
+            L3_LLI_sendData(arqPdu, pduSize, dest_ID);
             seqNum++;
+            */
 
-            pc.printf("[MAIN] sending to %i (seq:%i)\n", dest_ID, (seqNum - 1) % CHATMSSG_MAX_SEQNUM);
+            pc.printf("[MAIN] sending to %i (seq:%i)\n", myDestId, (seqNum - 1) % CHATMSSG_MAX_SEQNUM);
 
-            main_state = MAINSTATE_TX;
+            main_state = STATE_CHAT;
             flag_needPrint = 1;
 
             wordLen = 0;
-            arqEvent_clearEventFlag(SDU_Rcvd);
+            L3_event_clearEventFlag(SDU_Rcvd);
         }
 
         else if (flag_needPrint == 1)

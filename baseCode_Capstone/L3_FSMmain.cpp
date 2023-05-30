@@ -141,19 +141,18 @@ void L3_FSMrun(void)
     // FSM should be implemented here! ---->>>>
     switch (main_state)
     {
-
+            
+// Reqcon에서 받아옵시다.
+    uint8_t conID = 0          
     // IDLE STATE
     case STATE_IDLE:
-
-        // Retrieving data info.
-        uint8_t srcId = L3_LLI_getSrcId();
-        uint8_t *dataPtr = L3_LLI_getMsgPtr();
-        uint8_t size = L3_LLI_getSize();
-
+            
         // b
         if (L3_event_checkEventFlag(ReqCON_Rcvd))
         {
-
+            
+            uint8_t conID = L3_LLI_getSrcId();
+            if(conID)
             // debug("\n -------------------------------------------------\nRCVD MSG : %s (length:%i)\n -------------------------------------------------\n", dataPtr, size);
 
             pc.printf("\nCHAT으로 가기 위한 여정의 시작..");

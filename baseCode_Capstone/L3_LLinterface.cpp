@@ -70,6 +70,7 @@ void L3_LLI_dataInd(uint8_t* dataPtr, uint8_t srcId, uint8_t size, int8_t snr, i
     {      
         L3_event_setEventFlag(ReqCON_Other_Rcvd);
     }
+
   }
 
 
@@ -101,7 +102,7 @@ uint8_t L3_LLI_getSrcId()
 
 void L3_LLI_setDataReqFunc(void (*funcPtr)(uint8_t*, uint8_t, uint8_t))
 {
-    L3_LLI_dataReqFunc = funcPtr;
+    L3_LLI_dataReqFunc = funcPtr;   
 }
 
 

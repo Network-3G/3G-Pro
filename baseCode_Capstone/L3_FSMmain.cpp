@@ -310,7 +310,7 @@ void L3_FSMrun(void)
             //L3_msg_encodeAck(arqAck, L3_msg_getSeq(dataPtr));
             
             //cplCON을 보내야 함
-            Msg_encodeCONPDU(pdu, MSG_RSC_Req, MSG_ACP_ACCEPT);
+            Msg_encodeCONPDU(pdu, MSG_RSC_Cpl, MSG_ACP_ACCEPT);
             L3_LLI_dataReqFunc(pdu, L3_PDU_SIZE, myDestId);
 
             // main_state = MAINSTATE_TX;

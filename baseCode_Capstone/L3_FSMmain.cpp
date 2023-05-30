@@ -44,6 +44,7 @@ static uint8_t destinationWord[10];
 static uint8_t destinationLen = 0;
 
 static uint8_t destinationsdu[10];
+static uint8_t check = 0;
 
 char destinationString[12];
 
@@ -93,7 +94,7 @@ static void L3service_processInputWord(void)
             }
         }
     }
-    elif (!L3_event_checkEventFlag(ReqCON_Send))
+    else if (!L3_event_checkEventFlag(ReqCON_Send))
     {
         if (c == '\n' || c == '\r')
         {
@@ -115,10 +116,10 @@ static void L3service_processInputWord(void)
 }
 
 //void로 하기
-void L3_initFSM(uint8_t destId)
+void L3_initFSM(uint8_t input_thisId)
 {
 
-    myDestId = destId;
+    input_thisId = input_thisId;
     // initialize service layer
     pc.attach(&L3service_processInputWord, Serial::RxIrq);
 
@@ -140,9 +141,9 @@ void L3_FSMrun(void)
     // FSM should be implemented here! ---->>>>
     switch (main_state)
     {
-            
-// Reqcon에서 받아옵시다.
-    uint8_t conID = 0          
+           
+    uint8_t conID = 0;
+        
     // IDLE STATE
     case STATE_IDLE:
             
@@ -151,7 +152,7 @@ void L3_FSMrun(void)
         {
             
             uint8_t conID = L3_LLI_getSrcId();
-            if(conID)
+
             // debug("\n -------------------------------------------------\nRCVD MSG : %s (length:%i)\n -------------------------------------------------\n", dataPtr, size);
 
             pc.printf("\nCHAT으로 가기 위한 여정의 시작..");
@@ -183,8 +184,6 @@ void L3_FSMrun(void)
         {
 
             pc.printf(":: ID for the destination : ");
-            pc.scanf("%d", &input_destId);
-            myDestId = input_destId;
 
             // msg header setting
             // PDU라 나중에 수정할 것 !!
@@ -297,17 +296,22 @@ void L3_FSMrun(void)
     case STATE_CON_WAIT:
 
         // c, SDU 생성 event 안넣었음(위에 있는 함수)
-        if (L3_event_checkEventFlag(SetCON_Accept_Rcvd))
-        {
-
+             if (L3_event_checkEventFlag(SetCON_Accept_Rcvd))
+        {   
+            uint8_t verseID = L3_LLI_getSrcId(); //accept의 id
+            if(verseID =! conID)
+            {
+                check=1;
+            }
+            else {
             pc.printf("STATE CHANGED CON 2 CHAT ");
 
             // pdu
             //L3_msg_encodeAck(arqAck, L3_msg_getSeq(dataPtr));
             
             //cplCON을 보내야 함
-            Msg_encodeCONPDU(pdu, MSG_RSC_Cpl, MSG_ACP_ACCEPT);
-            L3_LLI_dataReqFunc(pdu, L3_PDU_SIZE, myDestId);
+            Msg_encodeCONPDU(arqAck, MSG_RSC_Cpl, MSG_ACP_ACCEPT);
+            L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, myDestId);
 
             // main_state = MAINSTATE_TX;
             main_state = STATE_CHAT;
@@ -316,25 +320,41 @@ void L3_FSMrun(void)
             // L3_event_clearEventFlag(L3_event_dataRcvd);
 
             L3_event_clearEventFlag(SetCON_Accept_Rcvd);
+            }
         }
 
         // d
         else if (L3_event_checkEventFlag(SetCON_Reject_Rcvd))
         {
+             uint8_t verseID = L3_LLI_getSrcId(); //accept의 id
+            if(verseID =! conID)
+            {
+                check=1;
+            }
+            else{
+           
             pc.printf("STATE CHANGED CON 2 IDLE ");
             cond_IDinput = 0;
             main_state = STATE_IDLE;
             L3_event_clearEventFlag(SetCON_Reject_Rcvd);
+            }
         }
 
         // e (timer)
         else if (L3_event_checkEventFlag(CplCON_Rcvd)) // data TX finished
         {
+            uint8_t verseID = L3_LLI_getSrcId(); //accept의 id
+            if(verseID =! conID)
+            {
+                check=1;
+            }
+            else{
             pc.printf("Timer Starts!! ");
             L3_timer_Chat_Timer();
 
             main_state = STATE_CHAT;
             L3_event_clearEventFlag(CplCON_Rcvd);
+            }
         }
 
         // CON 대기로 돌아오는 거
@@ -415,25 +435,43 @@ void L3_FSMrun(void)
         // l
         if (L3_event_checkEventFlag(CplDis_Rcvd))
         {
+        {   
+            uint8_t verseID = L3_LLI_getSrcId(); //accept의 id
+            if(verseID == conID)
+            {
             pc.printf("STATE CHANGED DIS 2 IDLE & ComDIS");
             cond_IDinput = 0;   
             main_state = STATE_IDLE;
             L3_event_clearEventFlag(CplDis_Rcvd);
+            }
+            else
+            {
+                check ==2
+            }
+
+        }
         }
 
         // k
         else if (L3_event_checkEventFlag(SetDis_Rcvd))
         {
+            uint8_t verseID = L3_LLI_getSrcId(); //accept의 id
+            if(verseID == conID)
+            {
             pc.printf("STATE CHANGED DIS 2 IDLE & SetupDIS");
 
             // CplDISPDU 보내기
-            Msg_encodeDISPDU(pdu, MSG_RSC_Cpl);
-            L3_LLI_dataReqFunc(pdu, L3_PDU_SIZE, myDestId);
-            
-            cond_IDinput = 0;  
+            Msg_encodeDISPDU(arqAck, MSG_RSC_Cpl);
+            L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, myDestId);
+
             main_state = STATE_IDLE;
-            L3_event_clearEventFlag(SetDis_Rcvd);
-        }
+            L3_event_clearEventFlag(SetDis_Rcvd);  
+            }
+
+            else
+            {
+                check ==2
+            }
 
         // DIS 대기로 돌아오는 거
         // a
@@ -519,26 +557,35 @@ void L3_FSMrun(void)
 
         // i
         if (L3_event_checkEventFlag(Chat_Timer_Expire))
-        {
-            // L3_timer_expireTimer();
-            // PDU 보내기
-            //DISreq 보내야함
-            Msg_encodeDISPDU(pdu, MSG_RSC_Req);
-            L3_LLI_dataReqFunc(pdu, L3_PDU_SIZE, myDestId);
+        {    
+            uint8_t verseID = L3_LLI_getSrcId(); //accept의 id
+            if(verseID == conID)
+            {
+
+            Msg_encodeDISPDU(arqAck, MSG_RSC_Req);
+            L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, myDestId);
             
             main_state = STATE_DIS_WAIT;
             L3_event_clearEventFlag(Chat_Timer_Expire);
+
+            }
+            else
+            {
+                check =3;
+            }
         }
 
         // j
         else if (L3_event_checkEventFlag(ReqDis_Rcvd))
         {
-
+            uint8_t verseID = L3_LLI_getSrcId(); //accept의 id
+            if(verseID == conID)
+            {
             pc.printf("STATE CHANGE 2 DIC CON ");
 
             // set
-            Msg_encodeDISPDU(pdu, MSG_RSC_Set);
-            L3_LLI_dataReqFunc(pdu, L3_PDU_SIZE, myDestId);
+            Msg_encodeDISPDU(arqAck, MSG_RSC_Set);
+            L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, myDestId);
 
             // main_state = MAINSTATE_TX;
             main_state = STATE_DIS_WAIT;
@@ -547,33 +594,52 @@ void L3_FSMrun(void)
             // L3_event_clearEventFlag(L3_event_dataRcvd);
 
             L3_event_clearEventFlag(ReqDis_Rcvd);
-        }
+            }
 
+            else
+            {
+                check = 3;
+            }
+        }
+            
         // f
+  
         else if (L3_event_checkEventFlag(ReqCON_Other_Rcvd))    //다른 ID로부터 req를 받으면
         {
+            uint8_t verseID = L3_LLI_getSrcId(); //accept의 id
+            if(verseID == conID)
+            {
             pc.printf("SetCON reject ");
 
             uint8_t srcId = L3_LLI_getSrcId();
 
             // setCON reject pdu 생성
-            Msg_encodeCONPDU(pdu, MSG_RSC_Set, MSG_ACP_REJECT);
-            L3_LLI_dataReqFunc(pdu, L3_PDU_SIZE, myDestId);
+            Msg_encodeCONPDU(arqAck, MSG_RSC_Set, MSG_ACP_REJECT);
+            L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, myDestId);
 
             flag_needPrint = 1;
 
             // L3_event_clearEventFlag(L3_event_dataRcvd);
 
             L3_event_clearEventFlag(ReqCON_Other_Rcvd);
+            }
+
+            else
+            {
+                check = 3;
+            }
         }
 
         // g
         else if (L3_event_checkEventFlag(SDU_Rcvd)) // if data needs to be sent (keyboard input)
         {
+            uint8_t verseID = L3_LLI_getSrcId(); //accept의 id
+            if(verseID == conID)
+            {
             // msg header setting
-            pduSize = Msg_encodeCHAT(sdu, originalWord, wordLen);
+            pduSize = Msg_encodeCHAT(arqPdu, originalWord, wordLen);
             //Msg_encodeCHAT
-            L3_LLI_dataReqFunc(sdu, pduSize, myDestId);
+            L3_LLI_sendData(arqPdu, pduSize, myDestId);
 
             pc.printf("[MAIN] sending to %i \n", myDestId);
 
@@ -582,7 +648,11 @@ void L3_FSMrun(void)
 
             wordLen = 0;
             L3_event_clearEventFlag(SDU_Rcvd);
-        }
+            }
+            else
+            {
+                check = 3;
+            }
 
         else if (flag_needPrint == 1)
         {
@@ -594,7 +664,9 @@ void L3_FSMrun(void)
         // h
         else if (L3_event_checkEventFlag(Chat_Rcvd)) // if data needs to be sent (keyboard input)
         {
-
+            uint8_t verseID = L3_LLI_getSrcId(); //accept의 id
+            if(verseID == conID)
+            {
             uint8_t* dataPtr = L3_LLI_getMsgPtr();
             uint8_t size = L3_LLI_getSize();
 
@@ -605,8 +677,12 @@ void L3_FSMrun(void)
             pc.printf("Give a word to send : ");
 
             L3_event_clearEventFlag(Chat_Rcvd);
+            }
+            else
+            {
+                check = 3; 
+            }
         }
-
         // CHAT으로 돌아오는 거
         // a
         else if (L3_event_checkEventFlag(ReqCON_Send))

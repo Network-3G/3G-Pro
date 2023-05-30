@@ -130,6 +130,7 @@ void L3_FSMrun(void)
 {
     uint8_t flag_needPrint = 1;
     uint8_t prev_state = 0;
+    uint8_t conID = 0;
 
     if (prev_state != main_state)
     {
@@ -140,10 +141,7 @@ void L3_FSMrun(void)
 
     // FSM should be implemented here! ---->>>>
     switch (main_state)
-    {
-           
-    uint8_t conID = 0;
-        
+    {   
     // IDLE STATE
     case STATE_IDLE:
             
@@ -151,7 +149,7 @@ void L3_FSMrun(void)
         if (L3_event_checkEventFlag(ReqCON_Rcvd))
         {
             
-            uint8_t conID = L3_LLI_getSrcId();
+            conID = L3_LLI_getSrcId();
 
             // debug("\n -------------------------------------------------\nRCVD MSG : %s (length:%i)\n -------------------------------------------------\n", dataPtr, size);
 

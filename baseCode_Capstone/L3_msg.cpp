@@ -33,32 +33,26 @@ int Msg_checkIfCplDIS_Rcvd(uint8_t* msg) // event l
 
 // 나 = input_thisId
 
-uint8_t Msg_encodeCONPDU(uint8_t* msg_CONPDU, int rsc, int acp, int srcID, int destID)
+uint8_t Msg_encodeCONPDU(uint8_t* msg_CONPDU, int rsc, int acp)
 {
     msg_CONPDU[MSG_OFFSET_TYPE] = MSG_TYPE_CON;
     msg_CONPDU[MSG_OFFSET_RSC] = rsc;
     msg_CONPDU[MSG_OFFSET_Acp] = acp;
-    msg_CONPDU[MSG_OFFSET_srcID] = srcID;
-    msg_CONPDU[MSG_OFFSET_destID] = destID;
 
 }
 
-uint8_t Msg_encodeDISPDU(uint8_t* msg_DISPDU, int rsc, int srcID, int destID)
+uint8_t Msg_encodeDISPDU(uint8_t* msg_DISPDU, int rsc)
 msg_DISPDU[MSG_OFFSET_TYPE] = MSG_TYPE_DIS;
 msg_DISPDU[MSG_OFFSET_RSC] = rsc;
 msg_DISPDU[MSG_OFFSET_Acp] = MSG_ACP_ACCEPT;
-msg_DISPDU[MSG_OFFSET_srcID] = srcID;
-msg_DISPDU[MSG_OFFSET_destID] = destID;
 
 }
 
-uint8_t Msg_encodeCHAT(uint8_t* msg_data, uint8_t* data, int srcID, int destID, int len)
+uint8_t Msg_encodeCHAT(uint8_t* msg_data, uint8_t* data, int len)
 {
     msg_data[MSG_OFFSET_TYPE] = MSG_TYPE_CHAT;
-    msg_data[MSG_OFFSET_RSC] = rsc;
-    msg_data[MSG_OFFSET_Acp] = acp;
-    msg_data[MSG_OFFSET_srcID] = srcID;
-    msg_data[MSG_OFFSET_destID] = destID;
+    msg_data[MSG_OFFSET_RSC] = 4;       //rsc 상관없음   
+    msg_data[MSG_OFFSET_Acp] = MSG_ACP_ACCEPT;
 
     memcpy(&msg_data[MSG_OFFSET_CHAT], data, len * sizeof(uint8_t));
 

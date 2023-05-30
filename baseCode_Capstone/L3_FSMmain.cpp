@@ -214,66 +214,70 @@ void L3_FSMrun(void)
         // c
         else if (L3_event_checkEventFlag(SetCON_Accept_Rcvd))
         {
+            pc.printf("c");
             L3_event_clearEventFlag(SetCON_Accept_Rcvd);
         }
 
         // d
         else if (L3_event_checkEventFlag(SetCON_Reject_Rcvd))
         {
+            pc.printf("d");
             L3_event_clearEventFlag(SetCON_Reject_Rcvd);
         }
 
         // e
         else if (L3_event_checkEventFlag(CplCON_Rcvd))
         {
+            pc.printf("e");
             L3_event_clearEventFlag(CplCON_Rcvd);
-        }
-
-        // f
-        else if (L3_event_checkEventFlag(ReqCON_Other_Rcvd))
-        {
-            L3_event_clearEventFlag(ReqCON_Other_Rcvd);
         }
 
         // g
         else if (L3_event_checkEventFlag(SDU_Rcvd))
         {
+            pc.printf("g");
             L3_event_clearEventFlag(SDU_Rcvd);
         }
 
         // h
         else if (L3_event_checkEventFlag(Chat_Rcvd))
         {
+            pc.printf("h");
             L3_event_clearEventFlag(Chat_Rcvd);
         }
 
         // i
         else if (L3_event_checkEventFlag(SDU_Rcvd))
         {
+            pc.printf("i");
             L3_event_clearEventFlag(SDU_Rcvd);
         }
 
         // j
         else if (L3_event_checkEventFlag(Chat_Timer_Expire))
         {
+            pc.printf("j");
             L3_event_clearEventFlag(Chat_Timer_Expire);
         }
 
         // k
         else if (L3_event_checkEventFlag(SetDis_Rcvd))
         {
+            pc.printf("k");
             L3_event_clearEventFlag(SetDis_Rcvd);
         }
 
         // l
         else if (L3_event_checkEventFlag(CplDis_Rcvd))
         {
+            pc.printf("l");
             L3_event_clearEventFlag(CplDis_Rcvd);
         }
 
         // m
         else if (L3_event_checkEventFlag(Other_PDU_Rcvd))
         {
+            pc.printf("m");
             L3_event_clearEventFlag(Other_PDU_Rcvd);
         }
         /*
@@ -337,60 +341,70 @@ void L3_FSMrun(void)
         // a
         else if (L3_event_checkEventFlag(ReqCON_Send))
         {
+            pc.printf("a");
             L3_event_clearEventFlag(ReqCON_Send);
         }
 
         // b
         else if (L3_event_checkEventFlag(ReqCON_Rcvd))
         {
+            pc.printf("b");
             L3_event_clearEventFlag(ReqCON_Rcvd);
         }
 
         // f
         else if (L3_event_checkEventFlag(ReqCON_Other_Rcvd))
         {
+            pc.printf("f");
             L3_event_clearEventFlag(ReqCON_Other_Rcvd);
         }
 
         // g
         else if (L3_event_checkEventFlag(SDU_Rcvd))
         {
+            pc.printf("g");
             L3_event_clearEventFlag(SDU_Rcvd);
         }
 
         // h
         else if (L3_event_checkEventFlag(Chat_Rcvd))
         {
+            pc.printf("h");
             L3_event_clearEventFlag(Chat_Rcvd);
         }
 
         // i
         else if (L3_event_checkEventFlag(SDU_Rcvd))
         {
+            pc.printf("i");
             L3_event_clearEventFlag(SDU_Rcvd);
         }
 
         // j
         else if (L3_event_checkEventFlag(Chat_Timer_Expire))
         {
+            pc.printf("j");
             L3_event_clearEventFlag(Chat_Timer_Expire);
         }
 
         // k
         else if (L3_event_checkEventFlag(SetDis_Rcvd))
         {
+            pc.printf("k");
             L3_event_clearEventFlag(SetDis_Rcvd);
         }
 
         // l
         else if (L3_event_checkEventFlag(CplDis_Rcvd))
         {
+            pc.printf("l");
             L3_event_clearEventFlag(CplDis_Rcvd);
         }
 
         // m
         else if (L3_event_checkEventFlag(Other_PDU_Rcvd))
         {
+            pc.printf("m");
             L3_event_clearEventFlag(Other_PDU_Rcvd);
         }
         break;
@@ -425,66 +439,77 @@ void L3_FSMrun(void)
         // a
         else if (L3_event_checkEventFlag(ReqCON_Send))
         {
+            pc.printf("a");
             L3_event_clearEventFlag(ReqCON_Send);
         }
 
         // b
         else if (L3_event_checkEventFlag(ReqCON_Rcvd))
         {
+            pc.printf("b");
             L3_event_clearEventFlag(ReqCON_Rcvd);
         }
 
         // c
         else if (L3_event_checkEventFlag(SetCON_Accept_Rcvd))
         {
+            pc.printf("c");
             L3_event_clearEventFlag(SetCON_Accept_Rcvd);
         }
 
         // d
         else if (L3_event_checkEventFlag(SetCON_Reject_Rcvd))
         {
+            pc.printf("d");
             L3_event_clearEventFlag(SetCON_Reject_Rcvd);
         }
 
         // e
         else if (L3_event_checkEventFlag(CplCON_Rcvd))
         {
+            pc.printf("e");
             L3_event_clearEventFlag(CplCON_Rcvd);
         }
 
         // f
         else if (L3_event_checkEventFlag(ReqCON_Other_Rcvd))
         {
+            pc.printf("f");
             L3_event_clearEventFlag(ReqCON_Other_Rcvd);
         }
 
         // g
         else if (L3_event_checkEventFlag(SDU_Rcvd))
         {
+            pc.printf("g");
             L3_event_clearEventFlag(SDU_Rcvd);
         }
 
         // h
         else if (L3_event_checkEventFlag(Chat_Rcvd))
         {
+            pc.printf("h");
             L3_event_clearEventFlag(Chat_Rcvd);
         }
 
         // i
         else if (L3_event_checkEventFlag(SDU_Rcvd))
         {
+            pc.printf("i");
             L3_event_clearEventFlag(SDU_Rcvd);
         }
 
         // j
         else if (L3_event_checkEventFlag(Chat_Timer_Expire))
         {
+            pc.printf("j");
             L3_event_clearEventFlag(Chat_Timer_Expire);
         }
 
         // m
         else if (L3_event_checkEventFlag(Other_PDU_Rcvd))
         {
+            pc.printf("m");
             L3_event_clearEventFlag(Other_PDU_Rcvd);
         }
         break;
@@ -586,48 +611,56 @@ void L3_FSMrun(void)
         // a
         else if (L3_event_checkEventFlag(ReqCON_Send))
         {
+            pc.printf("a");
             L3_event_clearEventFlag(ReqCON_Send);
         }
 
         // b
         else if (L3_event_checkEventFlag(ReqCON_Rcvd))
         {
+            pc.printf("b");
             L3_event_clearEventFlag(ReqCON_Rcvd);
         }
 
         // c
         else if (L3_event_checkEventFlag(SetCON_Accept_Rcvd))
         {
+            pc.printf("c");
             L3_event_clearEventFlag(SetCON_Accept_Rcvd);
         }
 
         // d
         else if (L3_event_checkEventFlag(SetCON_Reject_Rcvd))
         {
+            pc.printf("d");
             L3_event_clearEventFlag(SetCON_Reject_Rcvd);
         }
 
         // e
         else if (L3_event_checkEventFlag(CplCON_Rcvd))
         {
+            pc.printf("e");
             L3_event_clearEventFlag(CplCON_Rcvd);
         }
 
         // k
         else if (L3_event_checkEventFlag(SetDis_Rcvd))
         {
+            pc.printf("k");
             L3_event_clearEventFlag(SetDis_Rcvd);
         }
 
         // l
         else if (L3_event_checkEventFlag(CplDis_Rcvd))
         {
+            pc.printf("l");
             L3_event_clearEventFlag(CplDis_Rcvd);
         }
 
         // m
         else if (L3_event_checkEventFlag(Other_PDU_Rcvd))
         {
+            pc.printf("m");
             L3_event_clearEventFlag(Other_PDU_Rcvd);
         }
         break;

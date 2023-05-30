@@ -20,9 +20,7 @@
 #define MSG_OFFSET_TYPE  0		//PDU
 #define MSG_OFFSET_RSC   1
 #define MSG_OFFSET_Acp   2
-#define MSG_OFFSET_srcID	 3
-#define MSG_OFFSET_destID	 4
-#define MSG_OFFSET_CHAT	 5 
+#define MSG_OFFSET_CHAT	 3 
 
 
 
@@ -43,9 +41,9 @@ int Msg_checkIfSetDIS_Rcvd(uint8_t* msg) // event k
 int Msg_checkIfCplDIS_Rcvd(uint8_t* msg) // event l
 
 
-uint8_t Msg_encodeCONPDU(uint8_t* msg_CONPDU, int rsc, int acp, int srcID, int destID)
-uint8_t Msg_encodeDISPDU(uint8_t* msg_DISPDU, int rsc, int srcID, int destID)
-uint8_t Msg_encodeCHAT(uint8_t* msg_data, uint8_t* data, int rsc, int srcID, int destID, int len)
+uint8_t Msg_encodeCONPDU(uint8_t* msg_CONPDU, int rsc, int acp)
+uint8_t Msg_encodeDISPDU(uint8_t* msg_DISPDU, int rsc)
+uint8_t Msg_encodeCHAT(uint8_t* msg_data, uint8_t* data, int len)
 
 
 int arqMsg_checkIfData(uint8_t* msg);

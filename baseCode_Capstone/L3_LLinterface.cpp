@@ -51,9 +51,9 @@ void L3_LLI_dataInd(uint8_t* dataPtr, uint8_t srcId, uint8_t size, int8_t snr, i
         L3_event_setEventFlag(Other_ID_ReqCON); 
     }
 
-    else if (Msg_checkIfSetDIS_Rcvd(dataPtr)) //event j
+    else if (Msg_checkIfReqDIS_Rcvd(dataPtr)) //event j
     {
-        L3_event_setEventFlag(reqDIS_Rcvd);
+        L3_event_setEventFlag(ReqDIS_Rcvd);
     }
     
     else if (Msg_checkIfSetDIS_Rcvd(dataPtr)) //event k
@@ -70,7 +70,6 @@ void L3_LLI_dataInd(uint8_t* dataPtr, uint8_t srcId, uint8_t size, int8_t snr, i
     {      
         L3_event_setEventFlag(ReqCON_Other_Rcvd);
     }
-
   }
 
 

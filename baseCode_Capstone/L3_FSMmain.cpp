@@ -37,6 +37,8 @@ static uint8_t myDestId;
 
 // 새로 추가함
 uint8_t input_destId = 0;
+uint8_t cond_IDinput; // 0 - no ID, 1 - ID input
+
 
 // application event handler : generating SDU from keyboard input
 static void L3service_processInputWord(void)
@@ -83,6 +85,7 @@ static void L3service_processInputWord(void)
     }
 }
 
+//void로 하기
 void L3_initFSM(uint8_t destId)
 {
 
@@ -282,6 +285,7 @@ void L3_FSMrun(void)
         else if (L3_event_checkEventFlag(SetCON_Reject_Rcvd))
         {
             pc.printf("STATE CHANGED CON 2 IDLE ");
+            cond_IDinput = 0;
             main_state = STATE_IDLE;
             L3_event_clearEventFlag(SetCON_Reject_Rcvd);
         }
@@ -365,7 +369,7 @@ void L3_FSMrun(void)
         if (L3_event_checkEventFlag(CplDis_Rcvd))
         {
             pc.printf("STATE CHANGED DIS 2 IDLE & ComDIS");
-
+            cond_IDinput = 0;   
             main_state = STATE_IDLE;
             L3_event_clearEventFlag(CplDis_Rcvd);
         }

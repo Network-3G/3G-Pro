@@ -25,11 +25,11 @@ int main(void)
     pc.scanf("%d", &input_destId);*/
     pc.getc();
 
-    pc.printf("endnode : %i, dest : %i\n", input_thisId, input_destId);
+    pc.printf("endnode : %i\n", input_thisId);
 
     // initialize lower layer stacks
     L2_initFSM(input_thisId); // 내 번호
-    // L3_initFSM(input_destId);
+    L3_initFSM(input_thisId);//내번호 보내기
 
     while (1)
     {

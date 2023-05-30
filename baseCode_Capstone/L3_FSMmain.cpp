@@ -461,7 +461,7 @@ void L3_FSMrun(void)
             pc.printf("STATE CHANGED DIS 2 IDLE & SetupDIS");
 
             // CplDISPDU 보내기
-            Msg_encodeCONPDU(pdu, MSG_RSC_Req, MSG_ACP_ACCEPT);
+            Msg_encodeDISPDU(pdu, MSG_RSC_Cpl);
             L3_LLI_dataReqFunc(pdu, L3_PDU_SIZE, myDestId);
 
             cond_IDinput = 0; 

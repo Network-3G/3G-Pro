@@ -26,7 +26,7 @@
 
 
 #define ARQMSG_ACKSIZE      3
-#define L3_MSG_ACKSIZE 3
+#define L3_PDU_SIZE         3
 
 
 #define ARQMSG_MAXDATASIZE  26

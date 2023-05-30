@@ -27,9 +27,8 @@ static uint8_t wordLen = 0;
 static uint8_t sdu[1030];
 
 // ARQ 변수 나중에 바꿀 것 !!!!!!!!!!!!
-uint8_t seqNum = 0;  // ARQ sequence number
 uint8_t retxCnt = 0; // ARQ retransmission counter
-uint8_t arqAck[5];   // ARQ ACK PDU
+uint8_t pdu[5];   // ACK PDU
 
 // serial port interface
 static Serial pc(USBTX, USBRX);
@@ -167,8 +166,8 @@ void L3_FSMrun(void)
 
             //처음 받자마자 accept setCONPDU를 보내야 함
 
-            Msg_encodeCONPDU(arqAck, MSG_RSC_Set, MSG_ACP_ACCEPT);   //srcID로 한 이유는 처음 받은 애한테는 무조건 받아야 해서..
-            L3_LLI_dataReqFunc(arqAck, wordLen, myDestId);
+            Msg_encodeCONPDU(pdu, MSG_RSC_Set, MSG_ACP_ACCEPT);   //srcID로 한 이유는 처음 받은 애한테는 무조건 받아야 해서..
+            L3_LLI_dataReqFunc(pdu, wordLen, myDestId);
 
             // main_state = MAINSTATE_TX;
             main_state = STATE_CON_WAIT;
@@ -189,9 +188,10 @@ void L3_FSMrun(void)
 
             // msg header setting
             // PDU라 나중에 수정할 것 !!
-            //strcpy((char *)sdu, (char *)originalWord);
-            debug("[L3] msg length : %i\n", wordLen);
-            L3_LLI_dataReqFunc(sdu, wordLen, myDestId); //reqcon을 만들고 보내야 하는데 이건 뭐지?
+            // strcpy((char *)sdu, (char *)originalWord);
+            // debug("[L3] msg length : %i\n", wordLen);
+            Msg_encodeCONPDU(pdu, MSG_RSC_Req, MSG_ACP_ACCEPT);
+            L3_LLI_dataReqFunc(pdu, L3_PDU_SIZE, myDestId); //reqcon을 만들고 보내야 하는데 이건 뭐지?
 
             pc.printf("[MAIN] sending to %i \n", myDestId);
 
@@ -302,8 +302,8 @@ void L3_FSMrun(void)
             //L3_msg_encodeAck(arqAck, L3_msg_getSeq(dataPtr));
             
             //cplCON을 보내야 함
-            Msg_encodeCONPDU(arqAck, MSG_RSC_Cpl, MSG_ACP_ACCEPT);
-            L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, myDestId);
+            Msg_encodeCONPDU(pdu, MSG_RSC_Cpl, MSG_ACP_ACCEPT);
+            L3_LLI_dataReqFunc(pdu, L3_PDU_SIZE, myDestId);
 
             // main_state = MAINSTATE_TX;
             main_state = STATE_CHAT;
@@ -413,9 +413,10 @@ void L3_FSMrun(void)
             pc.printf("STATE CHANGED DIS 2 IDLE & SetupDIS");
 
             // CplDISPDU 보내기
-            Msg_encodeDISPDU(arqAck, MSG_RSC_Cpl);
-            L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, myDestId);
-
+            Msg_encodeDISPDU(pdu, MSG_RSC_Cpl);
+            L3_LLI_dataReqFunc(pdu, L3_PDU_SIZE, myDestId);
+            
+            cond_IDinput = 0;  
             main_state = STATE_IDLE;
             L3_event_clearEventFlag(SetDis_Rcvd);
         }
@@ -497,8 +498,8 @@ void L3_FSMrun(void)
             // L3_timer_expireTimer();
             // PDU 보내기
             //DISreq 보내야함
-            Msg_encodeDISPDU(arqAck, MSG_RSC_Req);
-            L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, myDestId);
+            Msg_encodeDISPDU(pdu, MSG_RSC_Req);
+            L3_LLI_dataReqFunc(pdu, L3_PDU_SIZE, myDestId);
             
             main_state = STATE_DIS_WAIT;
             L3_event_clearEventFlag(Chat_Timer_Expire);
@@ -511,8 +512,8 @@ void L3_FSMrun(void)
             pc.printf("STATE CHANGE 2 DIC CON ");
 
             // set
-            Msg_encodeDISPDU(arqAck, MSG_RSC_Set);
-            L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, myDestId);
+            Msg_encodeDISPDU(pdu, MSG_RSC_Set);
+            L3_LLI_dataReqFunc(pdu, L3_PDU_SIZE, myDestId);
 
             // main_state = MAINSTATE_TX;
             main_state = STATE_DIS_WAIT;
@@ -531,8 +532,8 @@ void L3_FSMrun(void)
             uint8_t srcId = L3_LLI_getSrcId();
 
             // setCON reject pdu 생성
-            Msg_encodeCONPDU(arqAck, MSG_RSC_Set, MSG_ACP_REJECT);
-            L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, myDestId);
+            Msg_encodeCONPDU(pdu, MSG_RSC_Set, MSG_ACP_REJECT);
+            L3_LLI_dataReqFunc(pdu, L3_PDU_SIZE, myDestId);
 
             flag_needPrint = 1;
 
@@ -545,9 +546,9 @@ void L3_FSMrun(void)
         else if (L3_event_checkEventFlag(SDU_Rcvd)) // if data needs to be sent (keyboard input)
         {
             // msg header setting
-            pduSize = Msg_encodeCHAT(arqPdu, originalWord, wordLen);
+            pduSize = Msg_encodeCHAT(sdu, originalWord, wordLen);
             //Msg_encodeCHAT
-            L3_LLI_sendData(arqPdu, pduSize, myDestId);
+            L3_LLI_dataReqFunc(sdu, pduSize, myDestId);
 
             pc.printf("[MAIN] sending to %i \n", myDestId);
 

@@ -512,20 +512,19 @@ void L3_FSMrun(void)
         }
 
         // g
-        else if (arqEvent_checkEventFlag(SDU_Rcvd)) // if data needs to be sent (keyboard input)
+        else if (L3_event_checkEventFlag(SDU_Rcvd)) // if data needs to be sent (keyboard input)
         {
             // msg header setting
-            pduSize = Msg_encodeCHAT(arqPdu, originalWord, wordLen);
+            pduSize = Msg_encodeCHAT(sdu, originalWord, wordLen);
             //Msg_encodeCHAT
-            L3_LLI_sendData(arqPdu, pduSize, myDestId);
+            L3_LLI_sendData(sdu, pduSize, myDestId);
 
             pc.printf("[MAIN] sending to %i \n", myDestId);
-
-            main_state = MAINSTATE_TX;
             flag_needPrint = 1;
 
             wordLen = 0;
-            arqEvent_clearEventFlag(SDU_Rcvd);
+            L3_event_clearEventFlag(SDU_Rcvd);
+            //arqEvent_clearEventFlag(SDU_Rcvd);
         }
 
         else if (flag_needPrint == 1)
@@ -536,17 +535,18 @@ void L3_FSMrun(void)
         }
 
         // h
-        else if (L3_event_checkEventFlag(Chat_Rcvd)) // if data needs to be sent (keyboard input)
+        else if (L3_event_checkEventFlag(Chat_Rcvd)) // 
         {
             // msg header setting
-            strcpy((char *)sdu, (char *)originalWord);
-            debug("[L3] msg length : %i\n", wordLen);
-            L3_LLI_dataReqFunc(sdu, wordLen, myDestId);
+            // strcpy((char *)sdu, (char *)originalWord);
+            //pduSize = Msg_encodeCHAT(sdu, originalWord, wordLen);
+            //debug("[L3] msg length : %i\n", wordLen);
+            //L3_LLI_dataReqFunc(sdu, wordLen, myDestId);
 
-            debug_if(DBGMSG_L3, "[L3] sending msg....\n");
-            wordLen = 0;
+            //debug_if(DBGMSG_L3, "[L3] sending msg....\n");
+            //wordLen = 0;
 
-            pc.printf("Give a word to send : ");
+            //pc.printf("Give a word to send : ");
 
             L3_event_clearEventFlag(Chat_Rcvd);
         }

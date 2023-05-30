@@ -133,8 +133,11 @@ void L3_FSMrun(void)
             // pdu
             //L3_msg_encodeAck(arqAck, L3_msg_getSeq(dataPtr));
 
+            srcId=myDestId  //받은 ID가 내 목적지가 됨
+
+
             //처음 받자마자 accept setCONPDU를 보내야 함
-            Msg_encodeCONPDU(arqAck, MSG_RSC_Set, MSG_ACP_ACCEPT, input_thisId, srcId);   //srcID로 한 이유는 처음 받은 애한테는 무조건 받아야 해서..
+            Msg_encodeCONPDU(arqAck, MSG_RSC_Set, MSG_ACP_ACCEPT);   //srcID로 한 이유는 처음 받은 애한테는 무조건 받아야 해서..
             L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, srcId);
 
             // main_state = MAINSTATE_TX;
@@ -269,7 +272,7 @@ void L3_FSMrun(void)
             //L3_msg_encodeAck(arqAck, L3_msg_getSeq(dataPtr));
             
             //cplCON을 보내야 함
-            Msg_encodeCONPDU(arqAck, MSG_RSC_Cpl, MSG_ACP_ACCEPT, input_thisId, myDestId);
+            Msg_encodeCONPDU(arqAck, MSG_RSC_Cpl, MSG_ACP_ACCEPT);
             L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, myDestId);
 
             // main_state = MAINSTATE_TX;
@@ -380,7 +383,7 @@ void L3_FSMrun(void)
             pc.printf("STATE CHANGED DIS 2 IDLE & SetupDIS");
 
             // CplDISPDU 보내기
-            Msg_encodeCONPDU(arqAck, MSG_RSC_Cpl, MSG_ACP_ACCEPT, input_thisId, myDestId);
+            Msg_encodeDISPDU(arqAck, MSG_RSC_Cpl);
             L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, myDestId);
 
             main_state = STATE_IDLE;
@@ -464,7 +467,7 @@ void L3_FSMrun(void)
             // L3_timer_expireTimer();
             // PDU 보내기
             //DISreq 보내야함
-            Msg_encodeDISPDU(arqAck, MSG_RSC_Req, MSG_ACP_ACCEPT, input_thisId, myDestId);
+            Msg_encodeDISPDU(arqAck, MSG_RSC_Req);
             L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, myDestId);
             
             main_state = STATE_DIS_WAIT;
@@ -478,8 +481,8 @@ void L3_FSMrun(void)
             pc.printf("STATE CHANGE 2 DIC CON ");
 
             // set
-            Msg_encodeDISPDU(arqAck, MSG_RSC_Set, MSG_ACP_ACCEPT, input_thisId, myDestId);
-            L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, srcId);
+            Msg_encodeDISPDU(arqAck, MSG_RSC_Set);
+            L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, myDestId);
 
             // main_state = MAINSTATE_TX;
             main_state = STATE_DIS_WAIT;
@@ -495,9 +498,10 @@ void L3_FSMrun(void)
         {
             pc.printf("SetCON reject ");
 
+            uint8_t srcId = L3_LLI_getSrcId();
 
             // setCON reject pdu 생성
-            Msg_encodeCONPDU(arqAck, MSG_RSC_Set, MSG_ACP_REJECT, input_thisId, myDestId);
+            Msg_encodeCONPDU(arqAck, MSG_RSC_Set, MSG_ACP_REJECT);
             L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, myDestId);
 
             flag_needPrint = 1;
@@ -511,7 +515,7 @@ void L3_FSMrun(void)
         else if (arqEvent_checkEventFlag(SDU_Rcvd)) // if data needs to be sent (keyboard input)
         {
             // msg header setting
-            pduSize = Msg_encodeCHAT(arqPdu, originalWord, input_thisId, myDestId, wordLen);
+            pduSize = Msg_encodeCHAT(arqPdu, originalWord, wordLen);
             //Msg_encodeCHAT
             L3_LLI_sendData(arqPdu, pduSize, myDestId);
 

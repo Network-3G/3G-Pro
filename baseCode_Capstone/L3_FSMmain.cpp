@@ -585,7 +585,7 @@ void L3_FSMrun(void)
             pc.printf("STATE CHANGE 2 DIC CON ");
 
             // set
-            Msg_encodeDISPDU(pdu, MSG_RSC_Req);
+            Msg_encodeDISPDU(pdu, MSG_RSC_Set);
             L3_LLI_dataReqFunc(pdu, L3_PDU_SIZE, myDestId);
 
             // main_state = MAINSTATE_TX;

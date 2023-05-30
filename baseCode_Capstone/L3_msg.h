@@ -33,17 +33,17 @@
 #define ARQMSSG_MAX_SEQNUM  1024
 
 
-int Msg_checkIfReqCON(uint8_t* msg) // event c
-int Msg_checkIfSetCON_Accept_Rcvd(uint8_t* msg) // event c
-int Msg_checkIfSetCON_Reject_Rcvd(uint8_t* msg) // event d
-int Msg_checkIfCplCON_Rcvd(uint8_t* msg) // event e
-int Msg_checkIfSetDIS_Rcvd(uint8_t* msg) // event k
-int Msg_checkIfCplDIS_Rcvd(uint8_t* msg) // event l
+int Msg_checkIfReqCON(uint8_t* msg); // event c
+int Msg_checkIfSetCON_Accept_Rcvd(uint8_t* msg); // event c
+int Msg_checkIfSetCON_Reject_Rcvd(uint8_t* msg); // event d
+int Msg_checkIfCplCON_Rcvd(uint8_t* msg); // event e
+int Msg_checkIfSetDIS_Rcvd(uint8_t* msg); // event k
+int Msg_checkIfCplDIS_Rcvd(uint8_t* msg); // event l
 
 
-uint8_t Msg_encodeCONPDU(uint8_t* msg_CONPDU, int rsc, int acp)
-uint8_t Msg_encodeDISPDU(uint8_t* msg_DISPDU, int rsc)
-uint8_t Msg_encodeCHAT(uint8_t* msg_data, uint8_t* data, int len)
+uint8_t Msg_encodeCONPDU(uint8_t* msg_CONPDU, int rsc, int acp);
+uint8_t Msg_encodeDISPDU(uint8_t* msg_DISPDU, int rsc);
+uint8_t Msg_encodeCHAT(uint8_t* msg_data, uint8_t* data, int len);
 
 
 int arqMsg_checkIfData(uint8_t* msg);
@@ -54,16 +54,16 @@ uint8_t arqMsg_encodeData(uint8_t* msg_data, uint8_t* data, int seq, int len);
 uint8_t* arqMsg_getWord(uint8_t* msg);
 
 //state IDLE
-int Msg_checkIfReqCON(uint8_t* msg) // event b
+int Msg_checkIfReqCON(uint8_t* msg); // event b
 
 //state CON
-int Msg_checkIfSetCON_Accept_Rcvd(uint8_t* msg) // event c
-int Msg_checkIfSetCON_Reject_Rcvd(uint8_t* msg) // event d
-int Msg_checkIfCplCON_Rcvd(uint8_t* msg) // event e
+int Msg_checkIfSetCON_Accept_Rcvd(uint8_t* msg); // event c
+int Msg_checkIfSetCON_Reject_Rcvd(uint8_t* msg); // event d
+int Msg_checkIfCplCON_Rcvd(uint8_t* msg); // event e
 
 //state DIS
-int Msg_checkIfSetDIS_Rcvd(uint8_t* msg) // event k
-int Msg_checkIfCplDIS_Rcvd(uint8_t* msg) // event l
+int Msg_checkIfSetDIS_Rcvd(uint8_t* msg); // event k
+int Msg_checkIfCplDIS_Rcvd(uint8_t* msg); // event l
 
 
 // 이거 추가함

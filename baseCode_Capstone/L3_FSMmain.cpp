@@ -138,7 +138,7 @@ void L3_FSMrun(void)
 
             //처음 받자마자 accept setCONPDU를 보내야 함
             Msg_encodeCONPDU(arqAck, MSG_RSC_Set, MSG_ACP_ACCEPT);   //srcID로 한 이유는 처음 받은 애한테는 무조건 받아야 해서..
-            L3_LLI_sendData(arqAck, L3_MSG_ACKSIZE, srcId);
+            L3_LLI_dataReqFunc(arqAck, wordLen, myDestId);
 
             // main_state = MAINSTATE_TX;
             main_state = STATE_CON_WAIT;
